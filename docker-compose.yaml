@@ -1,0 +1,33 @@
+---
+services:
+  pg:
+    image: postgres:latest
+    restart: unless-stopped
+    container_name: pg
+    hostname: pg
+    environment:
+      POSTGRES_DB: 'hive-metastore'
+      POSTGRES_USER: 'hive-metastore'
+      POSTGRES_PASSWORD: 'azerty123'
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg-volume:/var/lib/postgresql
+  
+  hive-metastore:
+    image: hive-metastore:4.0.1
+    depends_on:
+      - pg
+    restart: unless-stopped
+    container_name: hive-metastore
+    hostname: hive-metastore
+    environment:
+      SKIP_SCHEMA_INIT: 'false'
+      VERBOSE: 'true'
+    ports:
+      - '9083:9083'
+    volumes:
+      - /Users/thibaudcoueffe/Documents/dev/hive-metastore-docker/hive-libs:/opt/hive/lib
+
+volumes:
+  pg-volume:
